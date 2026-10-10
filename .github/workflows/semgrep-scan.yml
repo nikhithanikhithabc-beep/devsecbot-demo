@@ -1,0 +1,32 @@
+name: DevSecBot Security Scan
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  semgrep-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Semgrep
+        run: python -m pip install semgrep
+
+      - name: Run Semgrep Scan & Output JSON
+        run: |
+          semgrep --config p/security-audit --json -o semgrep-findings.json . || true
+
+      - name: Save Scan Findings Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-findings
+          path: semgrep-findings.json
