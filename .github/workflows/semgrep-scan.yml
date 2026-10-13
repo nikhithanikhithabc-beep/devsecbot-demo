@@ -23,7 +23,12 @@ jobs:
 
       - name: Run Semgrep Scan
         run: |
-          semgrep scan --config p/security-audit --json --output semgrep-findings.json .
+          semgrep scan \
+            --config p/security-audit \
+            --config sql-injection.yml \
+            --json \
+            --output semgrep-findings.json \
+            .
 
       - name: Upload Scan Findings
         if: always()
